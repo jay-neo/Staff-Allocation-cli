@@ -1,19 +1,21 @@
 #include <iostream>
+#include <cstring>
 #include <vector>
 #include <algorithm>
 #include <random>
 #include <filesystem>
 #include "libxl.h"
 
+
 struct Staff {
-    std::vector<std::pair<int, const wchar_t*>> Job;
+    std::vector<std::pair<int, const char*>> Job;
     int total;
     int recent;
     Staff() {
         total = 0;
         recent = 0;
     }
-    void addJob(int sft, const wchar_t* w){
+    void addJob(int sft, const char* w){
         recent = 1;
         total += 1;
         Job.emplace_back(sft, w);
@@ -25,17 +27,17 @@ struct Staff {
 
 class StaffAllocation {
     int st;
-    libxl::Book* givenFile = nullptr;
-    libxl::Book* staffFile = nullptr;
-    const wchar_t* inputFileName;
-    const wchar_t* outputFileName = L"Staff Allocation Sheet.xlsx";
-    std::vector<std::pair<const wchar_t*, struct Staff*>> staffs;
-    std::vector<const wchar_t*> rooms;
+    libxl::Book* givenFile = xlCreateXMLBook();
+    libxl::Book* staffFile = xlCreateXMLBook();
+    const char* inputFileName;
+    const char* outputFileName = "Staff Allocation Sheet.xlsx";
+    std::vector<std::pair<const char*, struct Staff*>> staffs;
+    std::vector<const char*> rooms;
 
 public:
-    StaffAllocation(const wchar_t* inputFilePath, int _st = 2) : inputFileName(inputFilePath), st(_st) {
-        givenFile = xlCreateXMLBook();
-        staffFile = xlCreateXMLBook();
+    StaffAllocation(const char* inputFilePath, int _st = 2) : inputFileName(inputFilePath), st(_st) {
+        // givenFile = xlCreateXMLBook();
+        // staffFile = xlCreateXMLBook();   
     }
 
     ~StaffAllocation() {
@@ -55,12 +57,12 @@ public:
 
     void sortStaff() {
         std::sort(staffs.begin(), staffs.end(), [](const auto &lhs, const auto &rhs){
-            if (lhs.second->total != rhs.second->total){
+            if (lhs.second->total != rhs.second->total){ // error
                 return lhs.second->total < rhs.second->total;
             } else if (lhs.second->recent != rhs.second->recent){
                 return lhs.second->recent < rhs.second->recent;
             } else {
-                return wcscmp(lhs.first, rhs.first) < 0;
+                return std::strcmp(lhs.first, rhs.first) < 0;
             }
         });
     }
@@ -74,13 +76,13 @@ public:
         int Columns = givenSheet->lastCol(); //+1
         int itr = -1;
 
-        staffSheet->writeStr(0, 0, givenSheet->readStr(0, 0) ? givenSheet->readStr(0, 0) : L"Staff Name");
+        staffSheet->writeStr(0, 0, givenSheet->readStr(0, 0));
 
         for(int r=1; r<Rows; ++r) {
             if (givenSheet->cellType(r, 0) != libxl::CELLTYPE_BLANK){
-                const wchar_t* cell = givenSheet->readStr(r, 0);
-                staffs[++itr] = {givenSheet->readStr(r, 0), new Staff()};
-                staffSheet->writeStr(r, 0, cell ? cell : L"Error: " + r);
+                staffs.emplace_back(givenSheet->readStr(r, 0), new Staff());
+                staffSheet->writeStr(r, 0, givenSheet->readStr(r, 0));
+                ++itr;
             }
         }
         int totalStaff = itr;
@@ -94,12 +96,11 @@ public:
             }
 
             // calculate room number for each shift
-            itr = 0;
             int rows = 1;
             for(int r=1; r<Rows; ++r) {
                 if(givenSheet->cellType(r, shift) != libxl::CELLTYPE_BLANK) {
                     ++rows;
-                    rooms[++itr] = givenSheet->readStr(r, shift);
+                    rooms.emplace_back(givenSheet->readStr(r, shift));
                 }
             }
 
@@ -118,7 +119,14 @@ public:
             while(itr<=totalStaff){
                 staffs[itr++].second->addJob();
             }
+
         }
+        for(itr = 0; itr<totalStaff; ++itr) {
+            for(int i=0; i<staffs[itr].second->Job.size(); ++i) {
+                staffSheet->writeStr(itr + 1, staffs[itr].second->Job[i].first, staffs[itr].second->Job[i].second);
+            }
+        }
+
     }
 
     void neo() {
@@ -176,12 +184,18 @@ int main(int argc, char const *argv[]) {
 
     std::string exePath = std::filesystem::path(argv[0]).parent_path().string();
     std::string givenFilePath = exePath + "/" + std::filesystem::path(argv[0]).stem().string() + ".xlsx";
-    std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-    std::wstring wideString = converter.from_bytes(givenFilePath);
-    const wchar_t* givenFile = wideString.c_str();
+    // std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+    // std::wstring wideString = converter.from_bytes(givenFilePath);
+    // const wchar_t* givenFile = wideString.c_str();
 
+    
     if(welcomeMsg()){
-        StaffAllocation jay(givenFile);
+        if (!std::filesystem::exists(givenFilePath)) {
+            std::cerr << "The prerequisite .xlsx file not found!!" << std::endl;
+            return 0;
+        }
+        
+        StaffAllocation jay(givenFilePath.c_str());
         try {
             jay.neo();
         } catch (std::exception &e) {
@@ -191,3 +205,12 @@ int main(int argc, char const *argv[]) {
 
     return 0;
 }
+
+/*
+For Linux:
+
+
+*/
+
+// cmake -G "MinGW Makefiles"
+// mingw32-make
