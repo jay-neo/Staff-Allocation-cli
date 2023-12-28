@@ -3,13 +3,14 @@
 ```
 Staff-Allocation
     │
-    ├── libxl
-    │    ├── bin
+    ├── libxl/
+    │    ├── bin/
     │    │    └── libxl.dll
-    │    ├── include_cpp
+    │    ├── include_cpp/
     │    │       └── libxl.h (with other libxl header files)
-    │    └── lib
-    │         └── libxl.lib
+    │    ├──── lib/
+    │    │      └── libxl.lib
+    │    └─── CMakeLists.txt
     │
     ├── CMakeLists.txt
     └── main.cpp
