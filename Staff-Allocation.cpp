@@ -3,18 +3,19 @@
 #include <vector>
 #include <algorithm>
 #include <random>
-// #include <experimental/filesystem>
+#include <filesystem>
 #include "libxl.h"
 #include <sstream>
 #include <string>
 
 std::string wchar2string(const char* charArray) {
+    if (charArray==nullptr) {
+        return "";
+    }
     return std::string(charArray);
 }
 
-// Convert std::string to const char*
 const char* string2wchar(const std::string& str) {
-    // c_str() returns a pointer to a null-terminated character array
     return str.c_str();
 }
 
@@ -44,6 +45,7 @@ void Error(int sheetIdx, int l) {
     std::cerr << " Something wrong in your Excel Sheet-" << sheetIdx + 1 << std::endl;
     std::cerr << "{May be number of staffs is less than the required number]" << std::endl;
     std::cout << "Press any key to exit..." << std::endl;
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::cin.get();
 }
 
@@ -84,7 +86,7 @@ class StaffAllocation {
     libxl::Book* givenFile = nullptr;
     libxl::Book* staffFile = nullptr;
     std::string inputFileName;
-    std::string outputFileName = "Staff Allocation Sheet.xlsx";
+    std::string outputFileName = "Final_Staff_Allocation_Sheet.xlsx";
     std::vector<std::pair<std::string, struct Staff>> staffs;
     std::vector<struct Work> currJobs;
 
@@ -140,9 +142,9 @@ public:
         int totalColumns = 1 + staffType;
 
         // Write Operation for Heading
-        // staffSheet->writeStr(0, 0, L"Staff Allocation Project by jay-neo !!");
-        // staffSheet->writeStr(1, 0, L"Staff Name");
-        staffSheet->writeStr(1, 0, givenSheet->readStr(0, 0));
+        staffSheet->writeStr(0, 0, string2wchar("Staff Allocation Project by jay-neo !!"));
+        staffSheet->writeStr(1, 0, string2wchar("Staff Name"));
+        // staffSheet->writeStr(1, 0, givenSheet->readStr(0, 0));
 
         for (int c = 1 + staffType; c < givenSheet->lastCol(); c += (jobType + 1)) {
             std::string str = wchar2string(givenSheet->readStr(0, c));
@@ -184,7 +186,7 @@ public:
         for (int c = (staffType + 1); c < totalColumns; c += (jobType + 1)) {
 
             req = 0;
-            std::cout << "Column-" << itr + 1 << std::endl;
+            
             for (int r = 1; r < Rows; ++r) {
                 std::string str1 = wchar2string(givenSheet->readStr(r, c));
                 if (!validCell(str1)) {
@@ -195,7 +197,6 @@ public:
                         std::string str2 = wchar2string(givenSheet->readStr(r, c + 1));
                         workValue = string2int(str2);
                         req += workValue;
-                        std::cout << req << " " << workValue << std::endl;
                     }
                     catch (const std::invalid_argument& e) {
                         std::cerr << "Invalid argument: " << e.what() << std::endl;
@@ -288,13 +289,15 @@ public:
         }
 
         std::cout << std::endl << std::endl;
-        std::cout << "           ####     ####   #    #  ####### " << std::endl;
-        std::cout << "           #   #   #    #  ##   #  #       " << std::endl;
-        std::cout << "           #    #  #    #  # #  #  #####   " << std::endl;
-        std::cout << "           #    #  #    #  #  # #  #       " << std::endl;
-        std::cout << "           #   #   #    #  #   ##  #       " << std::endl;
-        std::cout << "           ####     ####   #    #  ######  " << std::endl;
+        std::cout << "               ####     ####   #    #  ####### " << std::endl;
+        std::cout << "               #   #   #    #  ##   #  #       " << std::endl;
+        std::cout << "               #    #  #    #  # #  #  #####   " << std::endl;
+        std::cout << "               #    #  #    #  #  # #  #       " << std::endl;
+        std::cout << "               #   #   #    #  #   ##  #       " << std::endl;
+        std::cout << "               ####     ####   #    #  ######  " << std::endl;
         std::cout << std::endl << std::endl;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
     }
 };
 
@@ -303,13 +306,14 @@ public:
 bool welcomeMsg(int &a, int &b) {
 
     std::string msg = "0";
-    std::cout << "#################################################" << std::endl;
-    std::cout << "#      Enter the submitted staff's type         #" << std::endl;
-    std::cout << "#      Type 1 : Staffs with unlimited worklife  #" << std::endl;
-    std::cout << "#      Type 2 : Staffs with limited worklife    #" << std::endl;
-    std::cout << "#      Type 0 : Exit from the program           #" << std::endl;
-    std::cout << "#################################################" << std::endl;
-    std::cout << "Enter your choice ---------> ";
+    std::cout << std::endl;
+    std::cout << "      #################################################" << std::endl;
+    std::cout << "      #      Enter the submitted staff's type         #" << std::endl;
+    std::cout << "      #      Type 1 : Staffs with unlimited worklife  #" << std::endl;
+    std::cout << "      #      Type 2 : Staffs with limited worklife    #" << std::endl;
+    std::cout << "      #      Type 0 : Exit from the program           #" << std::endl;
+    std::cout << "      #################################################" << std::endl;
+    std::cout << "      Enter your choice ---------> ";
     while (msg != "1" or msg != "2") {
         std::cin >> msg;
         if (msg == "1") {
@@ -326,13 +330,13 @@ bool welcomeMsg(int &a, int &b) {
     std::cout << std::endl << std::endl;
 
 
-    std::cout << "########################################################" << std::endl;
-    std::cout << "#      Enter the submitted job's type                  #" << std::endl;
-    std::cout << "#      Type 1 : Each job with equal requirement        #" << std::endl;
-    std::cout << "#      Type 2 : Each job with different requirement    #" << std::endl;
-    std::cout << "#      Type 0 : Exit from the program                  #" << std::endl;
-    std::cout << "########################################################" << std::endl;
-    std::cout << "Enter your choice ---------> ";
+    std::cout << "      ########################################################" << std::endl;
+    std::cout << "      #      Enter the submitted job's type                  #" << std::endl;
+    std::cout << "      #      Type 1 : Each job with equal requirement        #" << std::endl;
+    std::cout << "      #      Type 2 : Each job with different requirement    #" << std::endl;
+    std::cout << "      #      Type 0 : Exit from the program                  #" << std::endl;
+    std::cout << "      ########################################################" << std::endl;
+    std::cout << "      Enter your choice ---------> ";
     while (msg != "1" or msg != "2") {
         std::cin >> msg;
         if (msg == "1") {
@@ -406,7 +410,7 @@ bool welcomeMsg(int &a, int &b) {
     std::cout << std::endl;
     std::cout << "2. The excel file name should be same name as the execution file(.exe)" << std::endl << std::endl;
 
-    while (msg != "y") {
+    while (msg != "jay-neo") {
         std::cout << "If you understand the prerequisites and continue the program then type password" << std::endl;
         std::cout << "else if you consider to exit then type 'exit' -------> ";
         std::cin >> msg;
@@ -420,18 +424,18 @@ bool welcomeMsg(int &a, int &b) {
 
 int main(int argc, char const* argv[]) {
 
-    // std::string exePath = std::experimental::filesystem::path(argv[0]).parent_path().string();
-    // std::string givenFilePath = exePath + "/" + std::experimental::filesystem::path(argv[0]).stem().string() + ".xlsx";
+    std::string exePath = std::filesystem::path(argv[0]).parent_path().string();
+    std::string givenFilePath = exePath + "/" + std::filesystem::path(argv[0]).stem().string() + ".xlsx";
 
     int a, b;
 
     if (welcomeMsg(a, b)) {
-        // if (!std::experimental::filesystem::exists(givenFilePath)) {
-        //     std::cerr << "The prerequisite .xlsx file not found!!" << std::endl;
-        //     return 0;
-        // }
+        if (!std::filesystem::exists(givenFilePath)) {
+            std::cerr << "The prerequisite .xlsx file not found!!" << std::endl;
+            return 0;
+        }
 
-        StaffAllocation jay("Staff-Allocation.xlsx",a , b);
+        StaffAllocation jay(givenFilePath, a , b);
         try {
             jay.neo();
         }

@@ -1,49 +1,55 @@
+ <div align='center'><h2>Staff Allocation</h2></div>
 
-## Project Repository Structure
+
+## How to Test the Program
+
+### For Linux
+
+- Step 1: Clone the repo in your local machine
+```sh
+git clone https://github.com/jay-neo/Staff-Allocation-cli.git
 ```
-Staff-Allocation
+
+- Step 2: Run two commands in terminal (bash/zsh/fish)
+```sh
+cd Staff-Allocation-cli
+```
+```sh
+sh build.sh
+```
+
+### For Windows
+
+- Step 1: Clone the repo in your local machine
+```sh
+git clone https://github.com/jay-neo/Staff-Allocation-cli.git
+```
+
+- Step 2: Run two commands in terminal (pwsh)
+```sh
+Set-Location Staff-Allocation-cli
+```
+```sh
+& (Join-Path (Get-Location) "build.ps1")
+```
+
+
+## Repository Structure
+```
+Staff-Allocation-cli
     │
     ├── libxl/
     │    ├── bin/
     │    │    └── libxl.dll
     │    ├── include_cpp/
     │    │       └── libxl.h (with other libxl header files)
-    │    ├──── lib/
-    │    │      └── libxl.lib
-    │    └─── CMakeLists.txt
+    │    └─── lib64/
+    │           ├── libxl.so
+    │           └── libxl.dill
     │
     ├── CMakeLists.txt
-    └── main.cpp
+    ├── main.cpp
+    │
+    └── Staff-Allocation.xlsx // This is the input file
 
 ```
-
-## How to complie and run
-
-### For Linux
-
-- Step 1: Check **cmake** is installed or not
-```sh
-cmake --version
-```
-
-- Step 2: If not installed then
-```sh
-sudo apt install cmake
-```
-this will work for only Debian based Linux
-
-- Step 3: Clone the repo in your local machine
-```sh
-git clone https://github.com/jay-neo/Staff-Allocation-cli.git
-```
-
-- Step 4: Copy and paste this code in terminal
-```sh
-cd Staff-Allocation-cli
-cmake -B build
-cd build
-make
-
-```
-
-

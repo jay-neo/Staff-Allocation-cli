@@ -14,7 +14,7 @@
 # Compiled Dynamic libraries
 # *.so
 *.dylib
-*.dll
+# *.dll
 
 # Fortran module files
 *.mod
@@ -40,4 +40,5 @@
 *.vsxproj.user
 build
 out
+bin
 
