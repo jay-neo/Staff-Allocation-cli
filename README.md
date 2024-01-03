@@ -1,4 +1,16 @@
- <div align='center'><h2>Staff Allocation</h2></div>
+ <div align='center'><h1>Staff Allocation</h1></div>
+
+## Problem Statement
+
+Uneven task distribution among staff members is impacting productivity and job satisfaction. The need for an automated system arises to minimize successively assigned tasks for each staff member. The goal is to optimize workforce efficiency while maintaining a fair and equitable task allocation process.
+
+### Constraints
+
+1. Staff members have varying workload capacities
+2. Equitable task distribution as Workload Balancing
+3. Each job may have varying requirement
+
+
 
 
 ## How to Test the Program
@@ -18,6 +30,11 @@ cd Staff-Allocation-cli
 sh build.sh
 ```
 
+<div align='center'><img src="doc/unix.png"/></div>
+
+
+
+
 ### For Windows
 
 - Step 1: Clone the repo in your local machine
@@ -27,11 +44,15 @@ git clone https://github.com/jay-neo/Staff-Allocation-cli.git
 
 - Step 2: Run two commands in terminal (pwsh)
 ```sh
-Set-Location Staff-Allocation-cli
+cd Staff-Allocation-cli
 ```
 ```sh
 & (Join-Path (Get-Location) "build.ps1")
 ```
+
+<div align='center'><img src="doc/win32.png"/></div>
+
+
 
 
 ## Repository Structure

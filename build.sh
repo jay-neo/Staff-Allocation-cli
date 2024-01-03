@@ -9,14 +9,14 @@ if ! { command -v cmake &> /dev/null; } then
     if [[ "$choice" =~ ^[Yy]$ ]]; then
         echo "Installing CMake..."
         
-        if command -v apt-get &> /dev/null ; then
+        if { command -v apt-get &> /dev/null; } then
             sudo apt-get update
             sudo apt-get install cmake
-        elif command -v yum &> /dev/null ; then
+        elif { command -v yum &> /dev/null; } then
             sudo yum install cmake
-        elif command -v dnf &> /dev/null ; then
+        elif { command -v dnf &> /dev/null; } then
             sudo dnf install cmake
-        elif command -v pacman &> /dev/null ; then
+        elif { command -v pacman &> /dev/null; } then
             sudo pacman -Syu cmake
         else
             echo "Unsupported package manager. Please install CMake manually."
