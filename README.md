@@ -10,7 +10,7 @@ Uneven task distribution among staff members is impacting productivity and job s
 2. Equitable task distribution as Workload Balancing
 3. Each job may have varying requirement
 
-
+Example: Teacher Allocation in Examination Rooms
 
 
 ## How to Test the Program
@@ -60,16 +60,14 @@ cd Staff-Allocation-cli
 Staff-Allocation-cli
     │
     ├── libxl/
-    │    ├── bin/
-    │    │    └── libxl.dll
     │    ├── include_cpp/
     │    │       └── libxl.h (with other libxl header files)
     │    └─── lib64/
     │           ├── libxl.so
-    │           └── libxl.dill
+    │           └── libxl.dll
     │
     ├── CMakeLists.txt
-    ├── main.cpp
+    ├── Staff-Allocation.cpp
     │
     └── Staff-Allocation.xlsx // This is the input file
 

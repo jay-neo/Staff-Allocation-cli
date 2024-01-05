@@ -29,6 +29,14 @@ if ! { command -v cmake &> /dev/null; } then
 
 fi
 
+if [ -d "Build" ]; then
+    echo "'Build' repository is already present!"
+    read -p "Do you want to delete it? (y/n): " choice
+    if [[ "$choice" =~ ^[Yy]$ ]]; then
+        echo "Deleting existing 'Build' folder..."
+        rm -rf Build
+    fi
+fi
 
 cmake -B build
 cd build

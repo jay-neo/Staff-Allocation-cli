@@ -6,7 +6,7 @@
 #include <filesystem>
 #include "libxl.h"
 #include <sstream>
-#include <string>
+
 
 std::string wchar2string(const char* charArray) {
     if (charArray==nullptr) {
@@ -117,11 +117,8 @@ public:
             if (lhs.second.total != rhs.second.total) {
                 return lhs.second.total < rhs.second.total;
             }
-            else if (lhs.second.recent != rhs.second.recent) {
-                return lhs.second.recent < rhs.second.recent;
-            }
             else {
-                return lhs.first < rhs.first;
+                return lhs.second.recent < rhs.second.recent;
             }
             });
     }
@@ -142,9 +139,9 @@ public:
         int totalColumns = 1 + staffType;
 
         // Write Operation for Heading
-        staffSheet->writeStr(0, 0, string2wchar("Staff Allocation Project by jay-neo !!"));
+        staffSheet->writeStr(0, 0, string2wchar("The code is open source in GitHub @jay-neo (https://github.com/jay-neo)"));
         staffSheet->writeStr(1, 0, string2wchar("Staff Name"));
-        // staffSheet->writeStr(1, 0, givenSheet->readStr(0, 0));
+        // staffSheet->writeStr(0, 0, givenSheet->readStr(0, 0));
 
         for (int c = 1 + staffType; c < givenSheet->lastCol(); c += (jobType + 1)) {
             std::string str = wchar2string(givenSheet->readStr(0, c));
@@ -448,3 +445,5 @@ int main(int argc, char const* argv[]) {
 
     return 0;
 }
+
+

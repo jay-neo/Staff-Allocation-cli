@@ -27,6 +27,16 @@ if (-not (Test-Path (Get-Command cmake.exe -ErrorAction SilentlyContinue).Path))
     }
 }
 
+if (Test-Path -Path ".\Build" -PathType Container) {
+    Write-Host "'Build' folder is already present!"
+    
+    $choice = Read-Host "Do you want to delete it? (y/n)"
+    if ($choice -eq 'y' -or $choice -eq 'Y') {
+        Write-Host "Deleting existing 'Build' folder..."
+        Remove-Item -Path ".\Build" -Recurse -Force
+    }
+}
+
 
 mkdir build
 cd build
