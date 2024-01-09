@@ -8,20 +8,19 @@
 #include <sstream>
 
 
-std::string wchar2string(const char* charArray) {
+std::string char2string(const char* charArray) {
     if (charArray==nullptr) {
         return "";
     }
     return std::string(charArray);
 }
 
-const char* string2wchar(const std::string& str) {
+const char* string2char(const std::string& str) {
     return str.c_str();
 }
 
-
-bool validCell(std::string str) {
-    for (char ch : str) {
+bool validCell(std::string& str) {
+    for (const char& ch : str) {
         if (!std::isspace(ch)) {
             return true;
         }
@@ -29,9 +28,8 @@ bool validCell(std::string str) {
     return false;
 }
 
-int string2int(std::string str) {
-    str.erase(std::remove_if(str.begin(), str.end(),
-        [](char c) { return !std::isdigit(c); }), str.end());
+int string2int(std::string& str) {
+    str.erase(std::remove_if(str.begin(), str.end(), [](char c) { return !std::isdigit(c); }), str.end());
 
     int res;
     std::istringstream(str) >> res;
@@ -39,7 +37,7 @@ int string2int(std::string str) {
     return res;
 }
 
-void Error(int sheetIdx, int l) {
+void Error(int& sheetIdx, int& l) {
     std::cout << std::endl;
     std::cout << "Line-" << l;
     std::cerr << " Something wrong in your Excel Sheet-" << sheetIdx + 1 << std::endl;
@@ -48,6 +46,8 @@ void Error(int sheetIdx, int l) {
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::cin.get();
 }
+
+
 
 struct Staff {
     std::vector<std::pair<int, std::string>> Job;
@@ -68,8 +68,6 @@ struct Staff {
         recent = 0;
     }
 };
-
-
 struct Work {
     std::string name;
     int value;
@@ -139,12 +137,12 @@ public:
         int totalColumns = 1 + staffType;
 
         // Write Operation for Heading
-        staffSheet->writeStr(0, 0, string2wchar("The code is open source in GitHub @jay-neo (https://github.com/jay-neo)"));
-        staffSheet->writeStr(1, 0, string2wchar("Staff Name"));
+        staffSheet->writeStr(0, 0, string2char("The code is open source in GitHub @jay-neo (https://github.com/jay-neo)"));
+        staffSheet->writeStr(1, 0, string2char("Staff Name"));
         // staffSheet->writeStr(0, 0, givenSheet->readStr(0, 0));
 
         for (int c = 1 + staffType; c < givenSheet->lastCol(); c += (jobType + 1)) {
-            std::string str = wchar2string(givenSheet->readStr(0, c));
+            std::string str = char2string(givenSheet->readStr(0, c));
             if (givenSheet->cellType(0, c) != libxl::CELLTYPE_BLANK and validCell(str)) {
                 staffSheet->writeStr(1, day + 1, givenSheet->readStr(0, c));
                 totalColumns += 2;
@@ -154,13 +152,13 @@ public:
 
         // Storing staffs name into Staffs vector
         for (int r = 1; r < givenSheet->lastRow(); ++r) {
-            std::string str = wchar2string(givenSheet->readStr(r, 0));
+            std::string str = char2string(givenSheet->readStr(r, 0));
             if (givenSheet->cellType(r, 0) != libxl::CELLTYPE_BLANK and validCell(str)) {
                 staffSheet->writeStr(r + 1, 0, givenSheet->readStr(r , 0));
                 staffs.emplace_back(str, Staff());
                 if (staffType) {
                     try {
-                        std::string str2 = wchar2string(givenSheet->readStr(r, 1));
+                        std::string str2 = char2string(givenSheet->readStr(r, 1));
                         staffs[r - 1].second.maxi = string2int(str2);
                     } catch (const std::invalid_argument& e) {
                         std::cerr << "Invalid argument: " << e.what() << std::endl;
@@ -185,13 +183,13 @@ public:
             req = 0;
             
             for (int r = 1; r < Rows; ++r) {
-                std::string str1 = wchar2string(givenSheet->readStr(r, c));
+                std::string str1 = char2string(givenSheet->readStr(r, c));
                 if (!validCell(str1)) {
                     continue;
                 }
                 if (jobType) {
                     try {
-                        std::string str2 = wchar2string(givenSheet->readStr(r, c + 1));
+                        std::string str2 = char2string(givenSheet->readStr(r, c + 1));
                         workValue = string2int(str2);
                         req += workValue;
                     }
@@ -257,9 +255,9 @@ public:
 
         // Final Write operation on Ouput Sheet
         for (itr = 1; itr < Rows; ++itr) {
-            staffSheet->writeStr(itr + 1, 0, string2wchar(staffs[itr - 1].first));
+            staffSheet->writeStr(itr + 1, 0, string2char(staffs[itr - 1].first));
             for (int i = 0; i < staffs[itr - 1].second.Job.size(); ++i) {
-                staffSheet->writeStr(itr + 1, staffs[itr - 1].second.Job[i].first , string2wchar(staffs[itr - 1].second.Job[i].second));
+                staffSheet->writeStr(itr + 1, staffs[itr - 1].second.Job[i].first , string2char(staffs[itr - 1].second.Job[i].second));
             }
         }
 
@@ -270,13 +268,14 @@ public:
 
     }
 
+
     void neo() {
-        if (givenFile->load(string2wchar(inputFileName))) {
+        if (givenFile->load(string2char(inputFileName))) {
 
             for (int sheetIdx = 0; sheetIdx < givenFile->sheetCount(); ++sheetIdx) {
                 this->allocateSheet(sheetIdx);
             }
-            staffFile->save(string2wchar(outputFileName));
+            staffFile->save(string2char(outputFileName));
 
         }
         else {
@@ -297,7 +296,6 @@ public:
 
     }
 };
-
 
 
 bool welcomeMsg(int &a, int &b) {
@@ -366,7 +364,7 @@ bool welcomeMsg(int &a, int &b) {
     std::cout << std::endl;
     std::cout << "#   Staff Name  #";
     if (a) {
-        std::cout << "  WorkLife   #";
+        std::cout << "  WorkLoad   #";
     }
     for (int j = 1; j <= 3 ; ++j) {
         std::cout << "     Day " << j << "   #";
@@ -419,6 +417,7 @@ bool welcomeMsg(int &a, int &b) {
     return true;
 }
 
+
 int main(int argc, char const* argv[]) {
 
     std::string exePath = std::filesystem::path(argv[0]).parent_path().string();
@@ -447,3 +446,5 @@ int main(int argc, char const* argv[]) {
 }
 
 
+
+// code by jay-neo
