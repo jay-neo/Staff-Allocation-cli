@@ -34,6 +34,8 @@ if (Test-Path -Path ".\Build" -PathType Container) {
     if ($choice -eq 'y' -or $choice -eq 'Y') {
         Write-Host "Deleting existing 'Build' folder..."
         Remove-Item -Path ".\Build" -Recurse -Force
+    } else {
+        return
     }
 }
 

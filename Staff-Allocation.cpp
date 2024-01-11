@@ -37,7 +37,7 @@ int string2int(std::string& str) {
     return res;
 }
 
-void Error(int& sheetIdx, int& l) {
+void Error(const int& sheetIdx, const int& l) {
     std::cout << std::endl;
     std::cout << "Line-" << l;
     std::cerr << " Something wrong in your Excel Sheet-" << sheetIdx + 1 << std::endl;

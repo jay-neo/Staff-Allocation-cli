@@ -35,6 +35,8 @@ if [ -d "Build" ]; then
     if [[ "$choice" =~ ^[Yy]$ ]]; then
         echo "Deleting existing 'Build' folder..."
         rm -rf Build
+    elif
+        return;
     fi
 fi
 
